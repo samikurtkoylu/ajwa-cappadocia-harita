@@ -270,6 +270,10 @@ body.editing .marker__core{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--terra),0 4p
 .loc__count{font-size:.66rem;color:var(--ink-soft);background:rgba(176,137,76,.12);border:1px solid var(--line);padding:.12rem .4rem;border-radius:999px;flex:0 0 auto}
 .loc__count b{font-weight:500;color:var(--gold-deep)}
 
+/* Kullanım harici (parsel dışı / kırmızı bölge) */
+.loc.is-outside .loc__sub{color:#c0392b;font-weight:600;letter-spacing:.1em}
+.marker.is-outside .marker__label .ml-eye{font-weight:600}
+
 /* ───────── Galeri / Lightbox ───────── */
 .lightbox{position:fixed;inset:0;z-index:120;display:grid;place-items:center}
 .lightbox[hidden]{display:none}

@@ -126,7 +126,8 @@
         "assets/photos/magara-02-kilicarslan/04.jpg",
         "assets/photos/magara-02-kilicarslan/05.jpg"
       ],
-      "count": 5
+      "count": 5,
+      "outside": true
     },
     {
       "slug": "magara-03-eretna-bey",
@@ -148,7 +149,8 @@
         "assets/photos/magara-03-eretna-bey/04.jpg",
         "assets/photos/magara-03-eretna-bey/05.jpg"
       ],
-      "count": 5
+      "count": 5,
+      "outside": true
     },
     {
       "slug": "magara-04-nasireddin-mehmed",
@@ -170,7 +172,8 @@
         "assets/photos/magara-04-nasireddin-mehmed/04.jpg",
         "assets/photos/magara-04-nasireddin-mehmed/05.jpg"
       ],
-      "count": 5
+      "count": 5,
+      "outside": true
     },
     {
       "slug": "magara-05-karamanoglu-ibrahim",
@@ -192,7 +195,8 @@
         "assets/photos/magara-05-karamanoglu-ibrahim/04.jpg",
         "assets/photos/magara-05-karamanoglu-ibrahim/05.jpg"
       ],
-      "count": 5
+      "count": 5,
+      "outside": true
     },
     {
       "slug": "magara-06-alaeddin-ali-bey",
@@ -214,7 +218,8 @@
         "assets/photos/magara-06-alaeddin-ali-bey/04.jpg",
         "assets/photos/magara-06-alaeddin-ali-bey/05.jpg"
       ],
-      "count": 5
+      "count": 5,
+      "outside": true
     },
     {
       "slug": "magara-07-kadi-burhanettin",
@@ -258,7 +263,8 @@
         "assets/photos/magara-08-suleyman-celebi/04.jpg",
         "assets/photos/magara-08-suleyman-celebi/05.jpg"
       ],
-      "count": 5
+      "count": 5,
+      "outside": true
     },
     {
       "slug": "magara-09-merzifonlu-kara-mustafa-pasa",
@@ -279,7 +285,8 @@
         "assets/photos/magara-09-merzifonlu-kara-mustafa-pasa/03.jpg",
         "assets/photos/magara-09-merzifonlu-kara-mustafa-pasa/04.jpg"
       ],
-      "count": 4
+      "count": 4,
+      "outside": true
     },
     {
       "slug": "magara-10-nevsehirli-damat-ibrahim-pasa",
@@ -300,7 +307,8 @@
         "assets/photos/magara-10-nevsehirli-damat-ibrahim-pasa/03.jpg",
         "assets/photos/magara-10-nevsehirli-damat-ibrahim-pasa/04.jpg"
       ],
-      "count": 4
+      "count": 4,
+      "outside": true
     },
     {
       "slug": "zeferan",
@@ -425,7 +433,8 @@
         "assets/photos/verni/07.jpg",
         "assets/photos/verni/08.jpg"
       ],
-      "count": 8
+      "count": 8,
+      "outside": true
     },
     {
       "slug": "kuznetsov",
@@ -577,7 +586,8 @@
         "assets/photos/lavanta/07.jpg",
         "assets/photos/lavanta/08.jpg"
       ],
-      "count": 8
+      "count": 8,
+      "outside": true
     },
     {
       "slug": "sakura",

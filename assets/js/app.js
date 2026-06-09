@@ -9,6 +9,7 @@
     magara: "#5e4630", konaklama: "#7d5a38", yeme: "#9a6c3c", aile: "#b07d40",
     kultur: "#c0903a", etkinlik: "#c59a44", saglik: "#a99a6a", bahce: "#94925c",
   };
+  const OUTSIDE_COLOR = "#c0392b"; // parsel dışı (kırmızı bölge) = kullanım harici
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
@@ -36,6 +37,7 @@
       "m3d.loadingTitle": "3D model yükleniyor…",
       "m3d.loadingDesc": 'Yüksek çözünürlüklü bir model olduğundan, internet hızınıza göre yüklenmesi <b>biraz zaman alabilir</b>. Lütfen bekleyiniz.',
       "m3d.show": "Yine de göster →",
+      "status.outside": "Kullanım Harici",
       "video.eyebrow": "Tanıtım Filmi",
       "video.title": "AJWA Cappadocia · Tanıtım Videosu",
     },
@@ -55,6 +57,7 @@
       "m3d.loadingTitle": "Loading 3D model…",
       "m3d.loadingDesc": 'This is a high-resolution model, so loading <b>may take a while</b> depending on your connection. Please wait.',
       "m3d.show": "Show anyway →",
+      "status.outside": "Out of Service",
       "video.eyebrow": "Promotional Film",
       "video.title": "AJWA Cappadocia · Promotional Video",
     },
@@ -126,19 +129,19 @@
     const wrap = $("#markers");
     wrap.innerHTML = "";
     DATA.locations.forEach((loc, i) => {
-      const c = CAT_COLORS[loc.category] || "#c9a44e";
+      const c = loc.outside ? OUTSIDE_COLOR : (CAT_COLORS[loc.category] || "#c9a44e");
       const b = document.createElement("button");
-      b.className = "marker";
+      b.className = loc.outside ? "marker is-outside" : "marker";
       b.style.left = loc.x + "%";
       b.style.top = loc.y + "%";
       b.style.setProperty("--c", c);
       b.style.animationDelay = (0.9 + i * 0.06) + "s";
       b.dataset.slug = loc.slug;
-      b.setAttribute("aria-label", locName(loc));
+      b.setAttribute("aria-label", locName(loc) + (loc.outside ? " · " + t("status.outside") : ""));
       b.innerHTML =
         '<span class="marker__pulse"></span>' +
         '<span class="marker__core"></span>' +
-        '<span class="marker__label"><span class="ml-eye">' + esc(catLabel(loc.category)) + '</span>' +
+        '<span class="marker__label"><span class="ml-eye">' + esc(loc.outside ? t("status.outside") : catLabel(loc.category)) + '</span>' +
         '<span class="ml-name">' + esc(locName(loc)) + '</span></span>';
       b.addEventListener("click", () => { if (!document.body.classList.contains("editing")) openGallery(loc.slug); });
       b.addEventListener("mouseenter", () => syncHot(loc.slug, true));
@@ -165,13 +168,13 @@
       inCat.forEach(loc => {
         n++;
         const item = document.createElement("button");
-        item.className = "loc";
-        item.style.setProperty("--cg", c);
+        item.className = loc.outside ? "loc is-outside" : "loc";
+        item.style.setProperty("--cg", loc.outside ? OUTSIDE_COLOR : c);
         item.dataset.slug = loc.slug;
         item.innerHTML =
           '<span class="loc__no">' + pad(n) + '</span>' +
           '<span class="loc__body"><span class="loc__name">' + esc(locName(loc)) + '</span>' +
-          '<span class="loc__sub">' + esc(locSub(loc)) + '</span></span>' +
+          '<span class="loc__sub">' + esc(loc.outside ? t("status.outside") : locSub(loc)) + '</span></span>' +
           '<span class="loc__count"><b>' + loc.count + '</b> ' + esc(t("unit.photos")) + '</span>';
         item.addEventListener("click", () => openGallery(loc.slug));
         item.addEventListener("mouseenter", () => syncHot(loc.slug, true));
