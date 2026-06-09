@@ -459,7 +459,8 @@ window.AJWA_DATA = {
         "assets/photos/kuznetsov/07.jpg",
         "assets/photos/kuznetsov/08.jpg"
       ],
-      "count": 8
+      "count": 8,
+      "outside": true
     },
     {
       "slug": "cave-clay",
@@ -586,8 +587,7 @@ window.AJWA_DATA = {
         "assets/photos/lavanta/07.jpg",
         "assets/photos/lavanta/08.jpg"
       ],
-      "count": 8,
-      "outside": true
+      "count": 8
     },
     {
       "slug": "sakura",
