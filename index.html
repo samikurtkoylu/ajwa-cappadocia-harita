@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AJWA Cappadocia · İnteraktif Yerleşim Haritası</title>
+<meta name="description" content="AJWA Cappadocia interaktif yerleşim haritası — mekanlara tıklayın, fotoğrafları keşfedin." />
+<link rel="preconnect" href="https://lh3.googleusercontent.com" />
+<link rel="stylesheet" href="assets/fonts/fonts.css" />
+<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="preload" as="image" href="assets/map/harita.png" />
+</head>
+<body data-boundary="on" data-base="illustration">
+
+  <!-- ░░ Açılış perdesi ░░ -->
+  <div id="loader" class="loader">
+    <div class="loader__inner">
+      <img class="loader__logo" src="assets/img/ajwa-logo.png" alt="AJWA Cappadocia" />
+      <div class="loader__bar"><span></span></div>
+      <div class="loader__hint" data-i18n="loader.hint">Yerleşim haritası hazırlanıyor</div>
+    </div>
+  </div>
+
+  <!-- ░░ Üst bar ░░ -->
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand__logo" src="assets/img/ajwa-logo.png" alt="AJWA Cappadocia" />
+    </div>
+    <div class="topbar__title">
+      <span class="eyebrow" data-i18n="top.eyebrow">İnteraktif Yerleşim Haritası</span>
+    </div>
+    <nav class="controls" aria-label="Harita kontrolleri">
+      <button class="ctrl ctrl--accent" id="btn3d" title="3D">
+        <span class="ctrl__cube">◰</span> <span data-i18n="ctrl.3d">3D Model</span>
+      </button>
+      <button class="ctrl" id="btnVideo" title="Tanıtım Videosu">
+        <span class="ctrl__cube">▶</span> <span data-i18n="ctrl.video">Tanıtım Videosu</span>
+      </button>
+      <button class="ctrl" id="btnAerial" aria-pressed="false" title="Drone">
+        <span class="ctrl__cube">⛰</span> <span data-i18n="ctrl.aerial">Havadan Görünüm</span>
+      </button>
+      <button class="ctrl" id="btnBoundary" aria-pressed="true" title="Parsel">
+        <span class="ctrl__dot"></span> <span data-i18n="ctrl.boundary">Parsel Sınırı</span>
+      </button>
+      <button class="ctrl" id="btnPanel" title="Mekanlar"><span data-i18n="ctrl.panel">Mekanlar</span></button>
+      <div class="lang" role="group" aria-label="Dil / Language">
+        <button class="lang__opt is-active" data-lang="tr">TR</button>
+        <button class="lang__opt" data-lang="en">EN</button>
+      </div>
+      <button class="ctrl ctrl--icon" id="btnFull" title="Tam ekran / Fullscreen" aria-label="Tam ekran">⤢</button>
+    </nav>
+  </header>
+
+  <!-- ░░ Sahne ░░ -->
+  <main class="stage">
+    <section class="mapwrap" id="mapwrap">
+      <figure class="mapframe" id="mapframe">
+        <div class="mapframe__inner">
+          <div class="mapframe__layers">
+            <img class="layer layer--base" id="mapBase" src="assets/map/harita.png" alt="AJWA Cappadocia yerleşim planı" draggable="false" />
+            <img class="layer layer--drone" id="mapDrone" src="assets/img/drone.jpg" alt="AJWA Cappadocia havadan görünüm" aria-hidden="true" draggable="false" />
+            <img class="layer layer--veil" id="mapVeil" src="assets/map/veil.png" alt="" aria-hidden="true" draggable="false" />
+            <img class="layer layer--outline" id="mapOutline" src="assets/map/outline.png" alt="" aria-hidden="true" draggable="false" />
+          </div>
+          <div class="markers" id="markers"></div>
+          <div class="edit-crosshair" id="crosshair" hidden><span></span><span></span><b id="crossLabel">0, 0</b></div>
+        </div>
+        <figcaption class="mapframe__cap">
+          <span>AJWA Cappadocia · Mustafapaşa, Ürgüp</span>
+          <span class="mapframe__legend">
+            <i class="lg lg--in"></i> <span data-i18n="legend.in">Parsel içi</span>
+            <i class="lg lg--out"></i> <span data-i18n="legend.out">Parsel dışı</span>
+          </span>
+        </figcaption>
+      </figure>
+
+      <p class="hint" id="hint" data-i18n-html="hint.html">Haritadaki <b>altın noktalara</b> tıklayarak mekanları keşfedin</p>
+    </section>
+
+    <!-- ░░ Mekan paneli ░░ -->
+    <aside class="panel" id="panel">
+      <div class="panel__head">
+        <h2 data-i18n="panel.title">Keşfedin</h2>
+        <p data-i18n="panel.desc">AJWA Cappadocia’nın mekanlarını gezin — bir mekana dokunun, fotoğrafları görün.</p>
+      </div>
+      <div class="panel__list" id="panelList"></div>
+    </aside>
+  </main>
+
+  <!-- ░░ Galeri ░░ -->
+  <div class="lightbox" id="lightbox" hidden>
+    <div class="lightbox__backdrop" data-close></div>
+    <div class="lightbox__shell" role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+      <header class="lightbox__bar">
+        <div class="lightbox__titles">
+          <span class="eyebrow" id="lbCat"></span>
+          <h3 id="lbTitle"></h3>
+          <span id="lbSub" class="lightbox__sub"></span>
+        </div>
+        <div class="lightbox__meta">
+          <span id="lbCount" class="lightbox__count"></span>
+          <button class="lightbox__close" id="lbClose" data-close aria-label="Kapat">✕</button>
+        </div>
+      </header>
+      <div class="lightbox__main">
+        <button class="nav nav--prev" id="lbPrev" aria-label="Önceki">‹</button>
+        <div class="lightbox__frame">
+          <img id="lbImg" alt="" />
+          <div class="lightbox__spin" id="lbSpin"></div>
+        </div>
+        <button class="nav nav--next" id="lbNext" aria-label="Sonraki">›</button>
+      </div>
+      <div class="lightbox__thumbs" id="lbThumbs"></div>
+    </div>
+  </div>
+
+  <!-- ░░ 3D Model ░░ -->
+  <div class="model3d" id="model3d" hidden>
+    <div class="model3d__backdrop" data-m3d-close></div>
+    <div class="model3d__shell" role="dialog" aria-modal="true" aria-label="3D Tesis Modeli">
+      <header class="model3d__bar">
+        <div class="model3d__titles">
+          <span class="eyebrow" data-i18n="m3d.eyebrow">Üç Boyutlu Model</span>
+          <h3 data-i18n="m3d.title">AJWA Cappadocia · 3D Tesis Modeli</h3>
+        </div>
+        <div class="model3d__meta">
+          <a class="model3d__ext" href="https://gulab.tr/" target="_blank" rel="noopener" data-i18n="m3d.full" title="gulab.tr">⤢ Tam ekran</a>
+          <button class="lightbox__close" id="m3dClose" data-m3d-close aria-label="Kapat">✕</button>
+        </div>
+      </header>
+      <div class="model3d__stage">
+        <div class="model3d__loading" id="m3dLoading">
+          <div class="lightbox__spin"></div>
+          <p><span data-i18n="m3d.loadingTitle">3D model yükleniyor…</span><br><span class="m3d-desc" data-i18n-html="m3d.loadingDesc">Yüksek çözünürlüklü bir model olduğundan, internet hızınıza göre yüklenmesi <b>biraz zaman alabilir</b>. Lütfen bekleyiniz.</span></p>
+          <button class="model3d__show" id="m3dShow" data-i18n="m3d.show" hidden>Yine de göster →</button>
+        </div>
+        <iframe id="m3dFrame" title="AJWA Cappadocia 3D Model"
+                allow="fullscreen; xr-spatial-tracking; accelerometer; gyroscope; magnetometer"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ Tanıtım Videosu ░░ -->
+  <div class="videobox" id="video" hidden>
+    <div class="videobox__backdrop" data-video-close></div>
+    <div class="videobox__shell" role="dialog" aria-modal="true" aria-label="Tanıtım Videosu">
+      <header class="videobox__bar">
+        <div class="videobox__titles">
+          <span class="eyebrow" data-i18n="video.eyebrow">Tanıtım Filmi</span>
+          <h3 data-i18n="video.title">AJWA Cappadocia · Tanıtım Videosu</h3>
+        </div>
+        <button class="lightbox__close" id="videoClose" data-video-close aria-label="Kapat">✕</button>
+      </header>
+      <div class="videobox__stage">
+        <iframe id="videoFrame" title="AJWA Cappadocia Tanıtım Videosu"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ░░ Düzenleme paneli ░░ -->
+  <div class="editbar" id="editbar" hidden>
+    <div class="editbar__head">
+      <strong>Konum Düzenleme</strong>
+      <button id="editClose" class="editbar__x" aria-label="Kapat">✕</button>
+    </div>
+    <p>Noktaları <b>sürükleyerek</b> doğru binalara taşıyın. Bittiğinde JSON’u kopyalayıp bana gönderin; kalıcı yaparım.</p>
+    <textarea id="editJson" readonly spellcheck="false"></textarea>
+    <div class="editbar__row">
+      <button id="editCopy" class="btn-gold">Koordinatları Kopyala</button>
+      <button id="editReset" class="btn-ghost">Sıfırla</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="data/locations.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
