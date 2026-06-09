@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://lh3.googleusercontent.com" />
 <link rel="stylesheet" href="assets/fonts/fonts.css" />
 <link rel="stylesheet" href="assets/css/style.css" />
-<link rel="preload" as="image" href="assets/map/harita.png" />
+<link rel="preload" as="image" href="assets/map/harita.jpg" />
 </head>
 <body data-boundary="on" data-base="illustration">
 
@@ -30,24 +30,24 @@
       <span class="eyebrow" data-i18n="top.eyebrow">İnteraktif Yerleşim Haritası</span>
     </div>
     <nav class="controls" aria-label="Harita kontrolleri">
-      <button class="ctrl ctrl--accent" id="btn3d" title="3D">
+      <button class="ctrl ctrl--accent" id="btn3d" type="button" title="3D">
         <span class="ctrl__cube">◰</span> <span data-i18n="ctrl.3d">3D Model</span>
       </button>
-      <button class="ctrl" id="btnVideo" title="Tanıtım Videosu">
+      <button class="ctrl" id="btnVideo" type="button" title="Tanıtım Videosu">
         <span class="ctrl__cube">▶</span> <span data-i18n="ctrl.video">Tanıtım Videosu</span>
       </button>
-      <button class="ctrl" id="btnAerial" aria-pressed="false" title="Drone">
+      <button class="ctrl" id="btnAerial" type="button" aria-pressed="false" title="Drone">
         <span class="ctrl__cube">⛰</span> <span data-i18n="ctrl.aerial">Havadan Görünüm</span>
       </button>
-      <button class="ctrl" id="btnBoundary" aria-pressed="true" title="Parsel">
+      <button class="ctrl" id="btnBoundary" type="button" aria-pressed="true" title="Parsel">
         <span class="ctrl__dot"></span> <span data-i18n="ctrl.boundary">Parsel Sınırı</span>
       </button>
-      <button class="ctrl" id="btnPanel" title="Mekanlar"><span data-i18n="ctrl.panel">Mekanlar</span></button>
+      <button class="ctrl" id="btnPanel" type="button" aria-controls="panel" aria-expanded="true" title="Mekanlar"><span data-i18n="ctrl.panel">Mekanlar</span></button>
       <div class="lang" role="group" aria-label="Dil / Language">
-        <button class="lang__opt is-active" data-lang="tr">TR</button>
-        <button class="lang__opt" data-lang="en">EN</button>
+        <button class="lang__opt is-active" type="button" data-lang="tr" aria-pressed="true">TR</button>
+        <button class="lang__opt" type="button" data-lang="en" aria-pressed="false">EN</button>
       </div>
-      <button class="ctrl ctrl--icon" id="btnFull" title="Tam ekran / Fullscreen" aria-label="Tam ekran">⤢</button>
+      <button class="ctrl ctrl--icon" id="btnFull" type="button" title="Tam ekran / Fullscreen" aria-label="Tam ekran">⤢</button>
     </nav>
   </header>
 
@@ -57,8 +57,8 @@
       <figure class="mapframe" id="mapframe">
         <div class="mapframe__inner">
           <div class="mapframe__layers">
-            <img class="layer layer--base" id="mapBase" src="assets/map/harita.png" alt="AJWA Cappadocia yerleşim planı" draggable="false" />
-            <img class="layer layer--drone" id="mapDrone" src="assets/img/drone.jpg" alt="AJWA Cappadocia havadan görünüm" aria-hidden="true" draggable="false" />
+            <img class="layer layer--base" id="mapBase" src="assets/map/harita.jpg" alt="AJWA Cappadocia yerleşim planı" draggable="false" fetchpriority="high" decoding="async" />
+            <img class="layer layer--drone" id="mapDrone" src="assets/img/drone.jpg" alt="AJWA Cappadocia havadan görünüm" aria-hidden="true" draggable="false" loading="lazy" decoding="async" />
             <img class="layer layer--veil" id="mapVeil" src="assets/map/veil.png" alt="" aria-hidden="true" draggable="false" />
             <img class="layer layer--outline" id="mapOutline" src="assets/map/outline.png" alt="" aria-hidden="true" draggable="false" />
           </div>
@@ -99,16 +99,16 @@
         </div>
         <div class="lightbox__meta">
           <span id="lbCount" class="lightbox__count"></span>
-          <button class="lightbox__close" id="lbClose" data-close aria-label="Kapat">✕</button>
+          <button class="lightbox__close" id="lbClose" type="button" data-close aria-label="Kapat">✕</button>
         </div>
       </header>
       <div class="lightbox__main">
-        <button class="nav nav--prev" id="lbPrev" aria-label="Önceki">‹</button>
+        <button class="nav nav--prev" id="lbPrev" type="button" aria-label="Önceki">‹</button>
         <div class="lightbox__frame">
           <img id="lbImg" alt="" />
           <div class="lightbox__spin" id="lbSpin"></div>
         </div>
-        <button class="nav nav--next" id="lbNext" aria-label="Sonraki">›</button>
+        <button class="nav nav--next" id="lbNext" type="button" aria-label="Sonraki">›</button>
       </div>
       <div class="lightbox__thumbs" id="lbThumbs"></div>
     </div>
@@ -125,14 +125,14 @@
         </div>
         <div class="model3d__meta">
           <a class="model3d__ext" href="https://gulab.tr/" target="_blank" rel="noopener" data-i18n="m3d.full" title="gulab.tr">⤢ Tam ekran</a>
-          <button class="lightbox__close" id="m3dClose" data-m3d-close aria-label="Kapat">✕</button>
+          <button class="lightbox__close" id="m3dClose" type="button" data-m3d-close aria-label="Kapat">✕</button>
         </div>
       </header>
       <div class="model3d__stage">
         <div class="model3d__loading" id="m3dLoading">
           <div class="lightbox__spin"></div>
           <p><span data-i18n="m3d.loadingTitle">3D model yükleniyor…</span><br><span class="m3d-desc" data-i18n-html="m3d.loadingDesc">Yüksek çözünürlüklü bir model olduğundan, internet hızınıza göre yüklenmesi <b>biraz zaman alabilir</b>. Lütfen bekleyiniz.</span></p>
-          <button class="model3d__show" id="m3dShow" data-i18n="m3d.show" hidden>Yine de göster →</button>
+          <button class="model3d__show" id="m3dShow" type="button" data-i18n="m3d.show" hidden>Yine de göster →</button>
         </div>
         <iframe id="m3dFrame" title="AJWA Cappadocia 3D Model"
                 allow="fullscreen; xr-spatial-tracking; accelerometer; gyroscope; magnetometer"></iframe>
@@ -149,7 +149,7 @@
           <span class="eyebrow" data-i18n="video.eyebrow">Tanıtım Filmi</span>
           <h3 data-i18n="video.title">AJWA Cappadocia · Tanıtım Videosu</h3>
         </div>
-        <button class="lightbox__close" id="videoClose" data-video-close aria-label="Kapat">✕</button>
+        <button class="lightbox__close" id="videoClose" type="button" data-video-close aria-label="Kapat">✕</button>
       </header>
       <div class="videobox__stage">
         <iframe id="videoFrame" title="AJWA Cappadocia Tanıtım Videosu"
@@ -163,13 +163,13 @@
   <div class="editbar" id="editbar" hidden>
     <div class="editbar__head">
       <strong>Konum Düzenleme</strong>
-      <button id="editClose" class="editbar__x" aria-label="Kapat">✕</button>
+      <button id="editClose" class="editbar__x" type="button" aria-label="Kapat">✕</button>
     </div>
     <p>Noktaları <b>sürükleyerek</b> doğru binalara taşıyın. Bittiğinde JSON’u kopyalayıp bana gönderin; kalıcı yaparım.</p>
     <textarea id="editJson" readonly spellcheck="false"></textarea>
     <div class="editbar__row">
-      <button id="editCopy" class="btn-gold">Koordinatları Kopyala</button>
-      <button id="editReset" class="btn-ghost">Sıfırla</button>
+      <button id="editCopy" class="btn-gold" type="button">Koordinatları Kopyala</button>
+      <button id="editReset" class="btn-ghost" type="button">Sıfırla</button>
     </div>
   </div>
 

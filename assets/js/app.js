@@ -22,6 +22,8 @@
   let LANG = (function () { try { return localStorage.getItem(LANG_KEY) === "en" ? "en" : "tr"; } catch (e) { return "tr"; } })();
   const I18N = {
     tr: {
+      "meta.title": "AJWA Cappadocia · İnteraktif Yerleşim Haritası",
+      "meta.description": "AJWA Cappadocia interaktif yerleşim haritası — mekanlara tıklayın, fotoğrafları keşfedin.",
       "loader.hint": "Yerleşim haritası hazırlanıyor",
       "top.eyebrow": "İnteraktif Yerleşim Haritası",
       "ctrl.3d": "3D Model", "ctrl.video": "Tanıtım Videosu", "ctrl.aerial": "Havadan Görünüm",
@@ -42,6 +44,8 @@
       "video.title": "AJWA Cappadocia · Tanıtım Videosu",
     },
     en: {
+      "meta.title": "AJWA Cappadocia · Interactive Site Map",
+      "meta.description": "AJWA Cappadocia interactive site map — explore venues, galleries and aerial views.",
       "loader.hint": "Preparing the site map",
       "top.eyebrow": "Interactive Site Map",
       "ctrl.3d": "3D Model", "ctrl.video": "Promo Video", "ctrl.aerial": "Aerial View",
@@ -71,9 +75,16 @@
     LANG = (lang === "en") ? "en" : "tr";
     try { localStorage.setItem(LANG_KEY, LANG); } catch (e) {}
     document.documentElement.lang = LANG;
+    document.title = t("meta.title");
+    const desc = $('meta[name="description"]');
+    if (desc) desc.setAttribute("content", t("meta.description"));
     $$("[data-i18n]").forEach(el => { el.textContent = t(el.getAttribute("data-i18n")); });
     $$("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.getAttribute("data-i18n-html")); });
-    $$(".lang__opt").forEach(b => b.classList.toggle("is-active", b.dataset.lang === LANG));
+    $$(".lang__opt").forEach(b => {
+      const active = b.dataset.lang === LANG;
+      b.classList.toggle("is-active", active);
+      b.setAttribute("aria-pressed", String(active));
+    });
     buildMarkers();
     buildPanel();
     if (lb.el && !lb.el.hidden) updateLightboxTexts();
@@ -132,6 +143,7 @@
       const c = loc.outside ? OUTSIDE_COLOR : (CAT_COLORS[loc.category] || "#c9a44e");
       const b = document.createElement("button");
       b.className = loc.outside ? "marker is-outside" : "marker";
+      b.type = "button";
       b.style.left = loc.x + "%";
       b.style.top = loc.y + "%";
       b.style.setProperty("--c", c);
@@ -169,6 +181,7 @@
         n++;
         const item = document.createElement("button");
         item.className = loc.outside ? "loc is-outside" : "loc";
+        item.type = "button";
         item.style.setProperty("--cg", loc.outside ? OUTSIDE_COLOR : c);
         item.dataset.slug = loc.slug;
         item.innerHTML =
@@ -192,7 +205,7 @@
 
   /* ── Galeri / Lightbox ── */
   const lb = {
-    el: null, img: null, spin: null, idx: 0, photos: [], loc: null,
+    el: null, img: null, spin: null, idx: 0, photos: [], loc: null, title: "", lastFocus: null,
   };
   function wireLightbox() {
     lb.el = $("#lightbox"); lb.img = $("#lbImg"); lb.spin = $("#lbSpin");
@@ -201,7 +214,8 @@
     $("#lbNext").addEventListener("click", () => step(1));
     document.addEventListener("keydown", e => {
       if (lb.el.hidden) return;
-      if (e.key === "Escape") closeGallery();
+      if (e.key === "Tab") trapFocus(lb.el, e);
+      else if (e.key === "Escape") closeGallery();
       else if (e.key === "ArrowLeft") step(-1);
       else if (e.key === "ArrowRight") step(1);
     });
@@ -214,7 +228,7 @@
   }
   function openPhotos(photos, title, sub, cat) {
     if (!photos || !photos.length) return;
-    lb.photos = photos; lb.idx = 0;
+    lb.photos = photos; lb.idx = 0; lb.title = title || ""; lb.lastFocus = document.activeElement;
     $("#lbCat").textContent = cat || "";
     $("#lbTitle").textContent = title;
     $("#lbSub").textContent = sub || "";
@@ -227,6 +241,7 @@
     if (single) $("#lbCount").textContent = "";
     lb.el.hidden = false;
     document.body.style.overflow = "hidden";
+    $("#lbClose").focus({ preventScroll: true });
     $("#hint") && $("#hint").classList.add("is-hidden");
   }
   function buildThumbs() {
@@ -234,6 +249,8 @@
     lb.photos.forEach((src, i) => {
       const d = document.createElement("button");
       d.className = "thumb"; d.dataset.i = i;
+      d.type = "button";
+      d.setAttribute("aria-label", (lb.title || "Foto") + " " + pad(i + 1) + " / " + pad(lb.photos.length));
       d.innerHTML = '<img loading="lazy" src="' + src + '" alt="">';
       d.addEventListener("click", () => show(i));
       t.appendChild(d);
@@ -244,6 +261,7 @@
     const src = lb.photos[lb.idx];
     lb.spin.classList.remove("is-done");
     lb.img.style.opacity = 0;
+    lb.img.alt = (lb.title ? lb.title + " · " : "") + pad(lb.idx + 1) + " / " + pad(lb.photos.length);
     const im = new Image();
     im.onload = () => { lb.img.src = src; lb.img.style.opacity = 1; lb.spin.classList.add("is-done"); };
     im.onerror = () => { lb.spin.classList.add("is-done"); };
@@ -256,21 +274,39 @@
     [lb.idx + 1, lb.idx - 1].forEach(k => { const p = lb.photos[(k + lb.photos.length) % lb.photos.length]; if (p) new Image().src = p; });
   }
   function step(d) { show(lb.idx + d); }
-  function closeGallery() { lb.el.hidden = true; document.body.style.overflow = ""; }
+  function closeGallery() {
+    lb.el.hidden = true; document.body.style.overflow = "";
+    if (lb.lastFocus && typeof lb.lastFocus.focus === "function") lb.lastFocus.focus({ preventScroll: true });
+  }
 
   /* ── 3D Model (gulab.tr iframe — sadece açılınca lazy yüklenir) ── */
   function wire3d() {
     const modal = $("#model3d"), frame = $("#m3dFrame"), loading = $("#m3dLoading"), showBtn = $("#m3dShow");
-    let loaded = false, showTimer = null;
-    const hideLoading = () => { loading.style.display = "none"; };
+    let loaded = false, loadingDismissed = false, showTimer = null, lastFocus = null;
+    const hideLoading = () => { clearTimeout(showTimer); loadingDismissed = true; loading.style.display = "none"; };
+    const scheduleShow = () => {
+      clearTimeout(showTimer);
+      if (!showBtn) return;
+      showBtn.hidden = true;
+      showTimer = setTimeout(() => {
+        if (!modal.hidden && loading.style.display !== "none") showBtn.hidden = false;
+      }, 6000);
+    };
     const open = () => {
+      lastFocus = document.activeElement;
       modal.hidden = false; document.body.style.overflow = "hidden";
+      if (loadingDismissed) loading.style.display = "none";
+      else { loading.style.display = "grid"; scheduleShow(); }
       if (!loaded) {
-        loading.style.display = "grid"; if (showBtn) showBtn.hidden = true;
         frame.src = "https://gulab.tr/"; loaded = true;
       }
+      $("#m3dClose").focus({ preventScroll: true });
     };
-    const close = () => { modal.hidden = true; document.body.style.overflow = ""; };
+    const close = () => {
+      clearTimeout(showTimer);
+      modal.hidden = true; document.body.style.overflow = "";
+      if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus({ preventScroll: true });
+    };
     $("#btn3d").addEventListener("click", open);
     $$("[data-m3d-close]").forEach(b => b.addEventListener("click", close));
     // Model GERÇEKTEN yüklendiğinde gulab.tr parent'a postMessage gönderirse bilgilendirmeyi kapat.
@@ -279,15 +315,12 @@
       if (e.origin === "https://gulab.tr" &&
           (e.data === "ajwa-model-loaded" || (e.data && e.data.type === "model-loaded"))) hideLoading();
     });
-    // iframe HTML'i yüklenir ama büyük .glb hâlâ akıyor olabilir → bilgilendirme EKRANDA KALIR.
-    // Modelin yüklendiğini çapraz-kökenden göremediğimiz için "yüklendi" demeyiz; 6 sn sonra
-    // dürüst bir "Yine de göster" seçeneği sunarız (kullanıcı dilerse modele geçer).
-    frame.addEventListener("load", () => {
-      clearTimeout(showTimer);
-      if (showBtn) showTimer = setTimeout(() => { showBtn.hidden = false; }, 6000);
-    });
     if (showBtn) showBtn.addEventListener("click", hideLoading);
-    document.addEventListener("keydown", e => { if (!modal.hidden && e.key === "Escape") close(); });
+    document.addEventListener("keydown", e => {
+      if (modal.hidden) return;
+      if (e.key === "Tab") trapFocus(modal, e);
+      else if (e.key === "Escape") close();
+    });
     // derin bağlantı: ?3d → modeli doğrudan aç
     if (new URLSearchParams(location.search).get("3d") !== null) setTimeout(open, 250);
   }
@@ -297,11 +330,23 @@
     const modal = $("#video"), frame = $("#videoFrame"), btn = $("#btnVideo");
     if (!btn || !modal || !frame) return;
     const SRC = "https://www.youtube.com/embed/PJHUahbsPyU?si=6lLFYrD-48qnV2PC&rel=0&autoplay=1";
-    const open = () => { modal.hidden = false; document.body.style.overflow = "hidden"; frame.src = SRC; };
-    const close = () => { modal.hidden = true; document.body.style.overflow = ""; frame.src = ""; }; // oynatmayı durdur
+    let lastFocus = null;
+    const open = () => {
+      lastFocus = document.activeElement;
+      modal.hidden = false; document.body.style.overflow = "hidden"; frame.src = SRC;
+      $("#videoClose").focus({ preventScroll: true });
+    };
+    const close = () => {
+      modal.hidden = true; document.body.style.overflow = ""; frame.src = ""; // oynatmayı durdur
+      if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus({ preventScroll: true });
+    };
     btn.addEventListener("click", open);
     $$("[data-video-close]").forEach(b => b.addEventListener("click", close));
-    document.addEventListener("keydown", e => { if (!modal.hidden && e.key === "Escape") close(); });
+    document.addEventListener("keydown", e => {
+      if (modal.hidden) return;
+      if (e.key === "Tab") trapFocus(modal, e);
+      else if (e.key === "Escape") close();
+    });
     if (new URLSearchParams(location.search).get("video") !== null) setTimeout(open, 250); // ?video derin bağlantı
   }
 
@@ -314,8 +359,9 @@
       e.currentTarget.setAttribute("aria-pressed", String(!on));
     });
     $("#btnPanel").addEventListener("click", e => {
-      $("#panel").classList.toggle("is-collapsed");
-      e.currentTarget.classList.toggle("is-active");
+      const collapsed = $("#panel").classList.toggle("is-collapsed");
+      e.currentTarget.classList.toggle("is-active", collapsed);
+      e.currentTarget.setAttribute("aria-expanded", String(!collapsed));
     });
     $("#btnFull").addEventListener("click", () => {
       if (!document.fullscreenElement) (document.documentElement.requestFullscreen && document.documentElement.requestFullscreen());
@@ -407,6 +453,14 @@
     const t = $("#toast"); t.hidden = false; t.textContent = msg;
     requestAnimationFrame(() => t.classList.add("show"));
     clearTimeout(toast._t); toast._t = setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.hidden = true, 400); }, 2200);
+  }
+  function trapFocus(container, e) {
+    const focusable = $$('button, [href], iframe, textarea, input, select, [tabindex]:not([tabindex="-1"])', container)
+      .filter(el => !el.disabled && el.offsetParent !== null);
+    if (!focusable.length) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
   function clamp(v) { return Math.max(0, Math.min(100, v)); }
   function pad(n) { return n < 10 ? "0" + n : "" + n; }
