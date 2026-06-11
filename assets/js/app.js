@@ -353,7 +353,8 @@
   /* ── Kontroller ── */
   function wireControls() {
     const body = document.body;
-    $("#btnBoundary").addEventListener("click", e => {
+    const btnBoundary = $("#btnBoundary"); // parsel sınırı şimdilik kaldırıldı; buton yoksa atla
+    if (btnBoundary) btnBoundary.addEventListener("click", e => {
       const on = body.getAttribute("data-boundary") === "on";
       body.setAttribute("data-boundary", on ? "off" : "on");
       e.currentTarget.setAttribute("aria-pressed", String(!on));

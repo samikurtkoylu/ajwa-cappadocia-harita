@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="assets/css/style.css" />
 <link rel="preload" as="image" href="assets/map/harita.jpg" />
 </head>
-<body data-boundary="on" data-base="illustration">
+<body data-boundary="off" data-base="illustration">
 
   <!-- ░░ Açılış perdesi ░░ -->
   <div id="loader" class="loader">
@@ -39,9 +39,11 @@
       <button class="ctrl" id="btnAerial" type="button" aria-pressed="false" title="Drone">
         <span class="ctrl__cube">⛰</span> <span data-i18n="ctrl.aerial">Havadan Görünüm</span>
       </button>
+      <!-- Parsel sınırı şimdilik kaldırıldı
       <button class="ctrl" id="btnBoundary" type="button" aria-pressed="true" title="Parsel">
         <span class="ctrl__dot"></span> <span data-i18n="ctrl.boundary">Parsel Sınırı</span>
       </button>
+      -->
       <button class="ctrl" id="btnPanel" type="button" aria-controls="panel" aria-expanded="true" title="Mekanlar"><span data-i18n="ctrl.panel">Mekanlar</span></button>
       <div class="lang" role="group" aria-label="Dil / Language">
         <button class="lang__opt is-active" type="button" data-lang="tr" aria-pressed="true">TR</button>
@@ -67,10 +69,12 @@
         </div>
         <figcaption class="mapframe__cap">
           <span>AJWA Cappadocia · Mustafapaşa, Ürgüp</span>
+          <!-- Parsel sınırı şimdilik kaldırıldı
           <span class="mapframe__legend">
             <i class="lg lg--in"></i> <span data-i18n="legend.in">Parsel içi</span>
             <i class="lg lg--out"></i> <span data-i18n="legend.out">Parsel dışı</span>
           </span>
+          -->
         </figcaption>
       </figure>
 
